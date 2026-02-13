@@ -1,0 +1,27 @@
+{
+    "manifest_version": 2,
+    "name": "Anonymous Theme Switcher",
+    "version": "1.0.0",
+    "description": "Changes theme groups.",
+    "author": "Team Anonymous",
+    "developer": {
+        "name": "Ramin, Daniel, Julian, Alex, Moe"
+    },
+    "browser_action": {
+    "//icon_note": "Add icons here once the design team finishes them",
+    "default_popup": "src/popup.html",
+    "default_title": "Anonymous Theme Switcher"
+    },
+    
+    "permissions": [
+        "storage",
+        "management",
+        "theme"
+    ],
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "anonymous_theme_switcher@team-anonymous.org",
+            "strict_min_version": "60.0"
+        }
+    }
+}
