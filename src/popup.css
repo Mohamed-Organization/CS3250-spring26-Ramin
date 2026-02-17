@@ -1,0 +1,40 @@
+/* popup.css Styling for the Anonymous Theme Switcher */
+
+body {
+    width: 300px;
+    padding: 15px;
+    background-color: #121212; /* Dark background */
+    color: #00ff9d;           
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* asked Ai for cool fonts */
+}
+
+h2 {
+    font-size: 1.2rem;
+    border-bottom: 2px solid #00ff9d;
+    padding-bottom: 10px;
+    text-align: center;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    background-color: #00ff9d;
+    color: #121212;
+    border: none;
+    border-radius: 4px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #00cc7a; /* Slightly darker on hover */
+}
+
+.status {
+    margin-top: 15px;
+    font-size: 0.9rem;
+    color: #888;
+    text-align: center;
+}
