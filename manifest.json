@@ -5,18 +5,22 @@
     "description": "Changes theme groups.",
     "author": "Team Anonymous",
     "developer": {
-        "name": "Ramin, Daniel, Julian, Alex, Moe"
+        "name": "Ramin, Daniel, Julian, Alejandro, Mohammad"
     },
     "browser_action": {
-    "//icon_note": "Add icons here once the design team finishes them",
-    "default_popup": "src/popup.html",
-    "default_title": "Anonymous Theme Switcher"
+        "default_popup": "src/popup.html",
+        "default_title": "Anonymous Theme Switcher"
     },
-    
+    "background": {
+        "scripts": ["src/background.js"],
+        "persistent": true
+    },
     "permissions": [
         "storage",
         "management",
-        "theme"
+        "theme",
+        "alarms",
+        "tabs"
     ],
     "browser_specific_settings": {
         "gecko": {
