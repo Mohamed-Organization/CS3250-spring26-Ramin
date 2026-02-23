@@ -1,11 +1,12 @@
 /* popup.css Styling for the Anonymous Theme Switcher */
 
 body {
-    width: 300px;
+    width: 320px;
+    min-height: 400px; /* This prevents the "thin box" look */
     padding: 15px;
-    background-color: #121212; /* Dark background */
-    color: #00ff9d;           
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* asked Ai for cool fonts */
+    background-color: #121212;
+    color: #00ff9d;
+    overflow-x: hidden; /* Keeps it tidy */
 }
 
 h2 {
@@ -13,28 +14,100 @@ h2 {
     border-bottom: 2px solid #00ff9d;
     padding-bottom: 10px;
     text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
-button {
+/* Styling for Input Fields */
+.input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+input[type="text"] {
     width: 100%;
     padding: 10px;
+    background: #1e1e1e;
+    border: 1px solid #333;
+    color: #00ff9d;
+    border-radius: 4px;
+    box-sizing: border-box; /* Prevents input from overflowing */
+}
+
+input[type="text"]:focus {
+    border-color: #00ff9d;
+    outline: none;
+    box-shadow: 0 0 5px #00ff9d;
+}
+
+/* Styling the File Upload */
+input[type="file"] {
+    font-size: 0.8rem;
+    color: #888;
+    padding: 5px 0;
+}
+
+/* Button Styling */
+button {
+    width: 100%;
+    padding: 12px;
     margin-top: 10px;
     background-color: #00ff9d;
     color: #121212;
     border: none;
     border-radius: 4px;
     font-weight: bold;
+    text-transform: uppercase;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
 }
 
 button:hover {
-    background-color: #00cc7a; /* Slightly darker on hover */
+    background-color: #00cc7a;
+    box-shadow: 0 0 10px #00ff9d;
+}
+
+/* Secondary Button for "Exit" */
+.secondary-btn {
+    background-color: transparent;
+    color: #ff4444; /* Red for alert/exit */
+    border: 1px solid #ff4444;
+    margin-top: 20px;
+}
+
+.secondary-btn:hover {
+    background-color: #ff4444;
+    color: white;
+}
+
+/* Theme List items created by JS */
+.button {
+    background: #1e1e1e;
+    color: #00ff9d;
+    border-left: 4px solid #00ff9d;
+    margin-bottom: 8px;
+    padding: 12px;
+    font-size: 1rem;
+    cursor: pointer; /* Makes the 'hand' cursor appear */
+    transition: background 0.2s, transform 0.1s;
+    border-radius: 2px;
+}
+
+.button:hover {
+    background: #2a2a2a;
+    transform: translateX(5px); /* Subtle shift effect */
+}
+
+.button:active {
+    background: #00ff9d;
+    color: #121212;
 }
 
 .status {
     margin-top: 15px;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     color: #888;
     text-align: center;
 }
