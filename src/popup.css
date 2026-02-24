@@ -112,52 +112,55 @@ button:hover {
     text-align: center;
 }
 
-/* Container for the group */
+/* Container for the group - subtle accent */
 .group-container {
-    margin: 10px 0;
-    border-left: 4px solid #3498db; /* Sleek blue accent bar */
-    background-color: #1a1a1a;
-    border-radius: 2px;
+    margin: 12px 0;
+    border-left: 3px solid #00f3ff; /* Sharp neon bar stays */
+    background-color: #121212;
+    border-radius: 0;
+    /* Removed the heavy box-shadow glow */
 }
 
-/* The clickable group title */
+/* The clickable Cyber header - sharp and clean */
 .group-header {
     width: 100%;
     padding: 12px;
-    background-color: #2c2c2c;
-    color: #3498db; /* Matches the accent bar */
+    background-color: #1a1a1a;
+    color: #00f3ff;
+    /* Reduced glow to a very subtle "haze" */
+    text-shadow: 0 0 2px rgba(0, 243, 255, 0.3); 
     text-align: left;
     border: none;
     cursor: pointer;
     font-size: 13px;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
     font-weight: bold;
     text-transform: uppercase;
 }
 
 .group-header:hover {
-    background-color: #3d3d3d;
-    color: #5dade2; /* Lighter blue for the hover effect */
+    background-color: #222;
+    color: #ffffff;
+    /* Hover glow is now very tight and clear */
+    text-shadow: 0 0 5px #00f3ff; 
 }
 
 .group-content {
-    background-color: #121212;
+    background-color: #0a0a0a;
     padding: 8px 0;
-    border-top: 1px solid #333;
+    border-top: 1px solid #222;
 }
 
-/* Make theme buttons inside the group look integrated and readable */
 .group-content .theme-button {
-    width: 92%;
-    background-color: #222;
-    border: 1px solid #444;
-    margin: 4px auto;
-    color: white; /* This fixes the black-on-black text! */
+    width: 94%;
+    background-color: #111;
+    border: 1px solid #00f3ff33; /* Faint border */
+    color: #ffffff; /* Switched back to white for max readability */
+    margin: 5px auto;
     display: block;
 }
 
-/* Optional: Add a subtle blue glow when you hover over the button inside the group */
 .group-content .theme-button:hover {
-    border-color: #3498db;
-    background-color: #2a2a2a;
+    border-color: #00f3ff;
+    background-color: #1a1a1a;
 }
