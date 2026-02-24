@@ -1,143 +1,176 @@
 'use strict';
 
 /**
- * Main logic to load themes from storage and build the UI list.
+ * GLOBAL VARIABLES
+ * These stay outside the functions so they don't get "forgotten" between clicks.
  */
-// used gemini to assist with this function
+let originalThemeId = null; // Remembers what theme you had before you started hovering
+let lockedInTheme = null;   // Remembers what theme you actually clicked
+
+/**
+ * INITIALIZE POPUP
+ * Main function that clears the UI and builds the list of grouped themes.
+ */
 async function initializePopup() {
     const currentDiv = document.getElementById('popup-content');
     if (!currentDiv) return;
 
-    // 1. Get ALL installed addons from Firefox
+    // 1. Get ALL installed themes and your saved Group data
     const allAddons = await browser.management.getAll();
+    const storageData = await browser.storage.local.get('userThemes');
     
-    // 2. Filter for only the themes
     const installedThemes = allAddons.filter(addon => addon.type === 'theme');
+    const savedThemes = storageData.userThemes || [];
 
-    // 3. Clear the old list
+    // 2. Clear the old list before redrawing
     while (currentDiv.firstChild) {
         currentDiv.removeChild(currentDiv.firstChild);
     }
 
-    // 4. Build the list of real Firefox themes
-    if (installedThemes.length > 0) {
-        installedThemes.forEach(theme => {
-            // We'll reuse your buildMenuItem to create the buttons
-            currentDiv.appendChild(buildMenuItem(theme));
+    // 3. Create a Sorting Object (The "Group Map")
+    // This turns our flat list into: { "SOULS": [theme1], "JUNGLE": [theme2] }
+    const themeGroups = {};
+
+    savedThemes.forEach(savedItem => {
+        const groupName = savedItem.group.toUpperCase(); // Force uppercase for the "Pro" look
+        if (!themeGroups[groupName]) {
+            themeGroups[groupName] = [];
+        }
+        
+        const match = installedThemes.find(t => t.id === savedItem.id);
+        if (match) {
+            themeGroups[groupName].push(match);
+        }
+    });
+
+    // 4. Build the Expandable UI (Accordion)
+    for (const groupName in themeGroups) {
+        const groupWrapper = document.createElement('div');
+        groupWrapper.className = 'group-container';
+
+        const header = document.createElement('button');
+        header.className = 'group-header';
+        header.textContent = groupName + " (" + themeGroups[groupName].length + ")";
+
+        const contentArea = document.createElement('div');
+        contentArea.className = 'group-content';
+        contentArea.style.display = "none"; // Hidden by default
+
+        // Add the theme buttons into the group
+        themeGroups[groupName].forEach(theme => {
+            contentArea.appendChild(buildMenuItem(theme));
         });
-    } else {
-        const msg = document.createElement('p');
-        msg.textContent = "No themes found! Install one from Firefox Add-ons.";
-        currentDiv.appendChild(msg);
+
+        // Click to Toggle: Opens or closes the group
+        header.addEventListener('click', () => {
+            if (contentArea.style.display === "none") {
+                contentArea.style.display = "block";
+                header.textContent = groupName; // Minimalist text when open
+            } else {
+                contentArea.style.display = "none";
+                header.textContent = groupName + " (" + themeGroups[groupName].length + ")";
+            }
+        });
+
+        groupWrapper.appendChild(header);
+        groupWrapper.appendChild(contentArea);
+        currentDiv.appendChild(groupWrapper);
     }
+
+    // 5. Add "Ungrouped" themes at the bottom
+    const otherHeader = document.createElement('h3');
+    otherHeader.textContent = "Ungrouped Themes";
+    currentDiv.appendChild(otherHeader);
+
+    installedThemes.forEach(theme => {
+        const isAlreadySaved = savedThemes.some(s => s.id === theme.id);
+        if (!isAlreadySaved) {
+            currentDiv.appendChild(buildMenuItem(theme));
+        }
+    });
 }
 
 /**
- * Creates a theme button for the popup menu.
+ * BUILD MENU ITEM
+ * Creates the individual buttons for each theme with hover-preview logic.
  */
-// This variable stays outside the function so it doesn't get "forgotten"
-let originalThemeId = null;
-
 function buildMenuItem(theme) {
     const btn = document.createElement('button');
     btn.textContent = theme.name;
     btn.className = 'theme-button';
 
-    // 1. MOUSE ENTER: Just a preview
+    // HOVER: Show a quick preview without changing settings permanently
     btn.addEventListener('mouseenter', async () => {
-        // Find out what the REAL active theme is before we start hovering
         const allAddons = await browser.management.getAll();
         const currentActive = allAddons.find(a => a.type === 'theme' && a.enabled);
         
-        // Save it so we can go back to it later
         if (currentActive && currentActive.id !== theme.id) {
-            originalThemeId = currentActive.id;
+            originalThemeId = currentActive.id; // Remember where we started
         }
-
-        // Show the preview
         await browser.management.setEnabled(theme.id, true);
     });
 
-    // 2. MOUSE LEAVE: The "Undo" button
+    // LEAVE: Put back the original theme unless the user clicked
     btn.addEventListener('mouseleave', async () => {
-        // If we have a saved original theme, put it back
         if (originalThemeId) {
             await browser.management.setEnabled(originalThemeId, true);
         }
     });
 
-    // 3. CLICK: The "Lock In" button
+    // CLICK: Lock it in permanently
     btn.addEventListener('click', async () => {
-        // Clear the memory so the 'mouseleave' doesn't undo our click!
-        originalThemeId = null; 
+        originalThemeId = null; // Clear the memory so 'mouseleave' doesn't undo the click
+        lockedInTheme = theme;   
         
         await browser.management.setEnabled(theme.id, true);
-        
-        // Add a simple visual "Success" feedback
-        btn.style.backgroundColor = "#2e7d32"; // "Jungle" green success color
-        setTimeout(() => btn.style.backgroundColor = "", 1000);
+
+        // Autofill the name box for easy saving
+        document.getElementById('theme-name').value = theme.name;
     });
 
     return btn;
 }
+
 /**
- * Grabs inputs and saves a new theme to storage.
+ * SAVE THEME
+ * Saves the currently "Locked In" theme to a group in storage.
  */
-// used Gemini to help with this function
 async function saveTheme() {
-    const customName = document.getElementById('theme-name').value;
-    const groupName = document.getElementById('group-name').value;
+    const groupInput = document.getElementById('group-name').value;
+    const groupName = groupInput || "General";
     const statusMsg = document.querySelector('.status');
 
-    // 1. Find which theme is currently enabled in Firefox
-    const allAddons = await browser.management.getAll();
-    const activeTheme = allAddons.find(addon => addon.type === 'theme' && addon.enabled);
-
-    if (!activeTheme) {
-        statusMsg.textContent = "No active theme found to save!";
+    if (!lockedInTheme) {
+        statusMsg.textContent = "Click a theme button first!";
         return;
     }
 
-    // 2. Create the entry for your custom list
-    const themeToSave = {
-        id: activeTheme.id, 
-        name: customName || activeTheme.name, // Use your custom name or the original
-        group: groupName || "General",
-        originalName: activeTheme.name
+    const data = await browser.storage.local.get('userThemes');
+    const savedList = data.userThemes || [];
+
+    const newEntry = {
+        id: lockedInTheme.id,
+        name: lockedInTheme.name,
+        group: groupName
     };
 
-    // 3. Save to local storage
-    const items = await browser.storage.local.get('userThemes');
-    const userThemes = items.userThemes || [];
+    savedList.push(newEntry);
+    await browser.storage.local.set({ userThemes: savedList }); //
     
-    // Prevent duplicates of the same theme in the same group
-    if (!userThemes.some(t => t.id === themeToSave.id && t.group === themeToSave.group)) {
-        userThemes.push(themeToSave);
-        await browser.storage.local.set({ userThemes });
-        statusMsg.textContent = `Saved to ${themeToSave.group}!`;
-        initializePopup(); // Refresh the list to show the new group
-    } else {
-        statusMsg.textContent = "Theme already in this group!";
-    }
+    statusMsg.textContent = "Saved to " + groupName + "!";
+    initializePopup(); // Refresh the list immediately
 }
-// --- EVENT LISTENERS ---
 
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM fully loaded and parsed. Initializing UI...");
-    initializePopup();
-});
+/**
+ * EVENT LISTENERS
+ * Connects the buttons in your HTML to the JS logic above.
+ */
+document.addEventListener('DOMContentLoaded', initializePopup);
 
 const saveBtn = document.getElementById('save-btn');
 if (saveBtn) {
     saveBtn.addEventListener('click', saveTheme);
 }
-
-document.addEventListener('click', (event) => {
-    if (event.target.classList.contains('button')) {
-        const currentId = event.target.id;
-        browser.storage.local.set({ currentid: currentId });
-    }
-});
 
 const shutdown = document.getElementById('shutdown');
 if (shutdown) {

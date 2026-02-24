@@ -111,3 +111,53 @@ button:hover {
     color: #888;
     text-align: center;
 }
+
+/* Container for the group */
+.group-container {
+    margin: 10px 0;
+    border-left: 4px solid #3498db; /* Sleek blue accent bar */
+    background-color: #1a1a1a;
+    border-radius: 2px;
+}
+
+/* The clickable group title */
+.group-header {
+    width: 100%;
+    padding: 12px;
+    background-color: #2c2c2c;
+    color: #3498db; /* Matches the accent bar */
+    text-align: left;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    letter-spacing: 1px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.group-header:hover {
+    background-color: #3d3d3d;
+    color: #5dade2; /* Lighter blue for the hover effect */
+}
+
+.group-content {
+    background-color: #121212;
+    padding: 8px 0;
+    border-top: 1px solid #333;
+}
+
+/* Make theme buttons inside the group look integrated and readable */
+.group-content .theme-button {
+    width: 92%;
+    background-color: #222;
+    border: 1px solid #444;
+    margin: 4px auto;
+    color: white; /* This fixes the black-on-black text! */
+    display: block;
+}
+
+/* Optional: Add a subtle blue glow when you hover over the button inside the group */
+.group-content .theme-button:hover {
+    border-color: #3498db;
+    background-color: #2a2a2a;
+}
