@@ -5,9 +5,20 @@
     "description": "Changes theme groups.",
     "author": "Team Anonymous",
     "developer": {
-        "name": "Ramin, Daniel, Julian, Alejandro, Mohammad"
+        "name": "Ramin, Daniel, Julian, Alejandro, Moe"
+    },
+    "icons": {
+        "16": "icons/icon.svg",
+        "32": "icons/icon.svg",
+        "48": "icons/icon.svg",
+        "96": "icons/icon.svg",
+        "128": "icons/icon.svg"
     },
     "browser_action": {
+        "default_icon": {
+            "16": "icons/icon.svg",
+            "32": "icons/icon.svg"
+        },
         "default_popup": "src/popup.html",
         "default_title": "Anonymous Theme Switcher"
     },
