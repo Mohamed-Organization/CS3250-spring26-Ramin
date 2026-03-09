@@ -258,3 +258,14 @@ async function handleRemoveTheme(themeId, groupName) {
     await browser.storage.local.set({ userThemes: updatedList });
     initializePopup();
 }
+
+// AI prompt: jest isn't using the popup.js for my test file what do I need?
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        initializePopup, buildMenuItem, saveTheme, handleDeleteGroup, handleRemoveTheme,
+        getOriginalThemeId: () => originalThemeId,
+        getLockedInTheme: () => lockedInTheme,
+        setOriginalThemeId: (v) => { originalThemeId = v; },
+        setLockedInTheme: (v) => { lockedInTheme = v; },
+    };
+}
